@@ -1,6 +1,7 @@
 from typing import List
 import os
 
+
 class Phonebook:
     def __init__(self, filename: str, entries_per_page: int):
         """
@@ -21,17 +22,26 @@ class Phonebook:
 
         This method reads the entries from the specified file and populates the phonebook.
         """
-        if os.path.exists(self.filename):
-            with open(self.filename, "r") as file:
-                for line in file:
-                    parts: List[str] = line.strip().split('|')
-                    if len(parts) == 7:
-                        entry_id, last_name, first_name, middle_name, organization, work_phone, personal_phone = parts
-                        # Update the ID counter based on the loaded entries
-                        entry_id: int = int(entry_id)
-                        if entry_id >= self.id_counter:
-                            self.id_counter: int = entry_id + 1
-                        self.entries.append(line.strip())
+        if not os.path.exists(self.filename):
+            return
+        with open(self.filename, "r") as file:
+            for line in file:
+                parts: List[str] = line.strip().split("|")
+                if len(parts) == 7:
+                    (
+                        entry,
+                        last_name,
+                        first_name,
+                        middle_name,
+                        organization,
+                        work_phone,
+                        personal_phone,
+                    ) = parts
+                    # Update the ID counter based on the loaded entries
+                    entry_id: int = int(entry)
+                    if entry_id >= self.id_counter:
+                        self.id_counter = entry_id + 1
+                    self.entries.append(line.strip())
 
     def calculate_pages(self) -> int:
         """
@@ -84,7 +94,7 @@ class Phonebook:
         personal_phone: str = input("Телефон личный: ")
         new_entry: str = f"{entry_id}|{last_name}|{first_name}|{middle_name}|{organization}|{work_phone}|{personal_phone}"
         self.entries.append(new_entry)
-    
+
     def edit_entry(self, entry_id: int) -> None:
         """
         Edit an existing phonebook entry.
@@ -96,13 +106,15 @@ class Phonebook:
         """
         entry_index: int = -1
         for i, entry in enumerate(self.entries):
-            parts: List[str] = entry.split('|')
-            if len(parts) >= 1 and int(parts[0]) == entry_id:
+            parts: List[str] = entry.split("|")
+            if parts and int(parts[0]) == entry_id:
                 entry_index = i
                 break
-        
+
         if entry_index != -1:
-            new_entry: str = input("Введите новую информацию в формате 'Фамилия|Имя|Отчество|Организация|Телефон рабочий|Телефон личный': ")
+            new_entry: str = input(
+                "Введите новую информацию в формате 'Фамилия|Имя|Отчество|Организация|Телефон рабочий|Телефон личный': "
+            )
             self.entries[entry_index] = f"{entry_id}|{new_entry}"
             self.save_entries()
             print("Запись успешно отредактирована.")
@@ -119,9 +131,7 @@ class Phonebook:
         Returns:
         - list: A list of matching entries.
         """
-        results: List[str] = []
-        for entry in self.entries:
-            if query.lower() in entry.lower():
-                results.append(entry)
+        results: List[str] = [
+            entry for entry in self.entries if query.lower() in entry.lower()
+        ]
         return results
-

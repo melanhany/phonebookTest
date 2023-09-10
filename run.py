@@ -2,13 +2,14 @@ from phonebook.phonebook import Phonebook
 import phonebook.constants as c
 import sys
 
+
 def main():
     """
     The main function to run the phonebook application.
     """
     phonebook = Phonebook(c.FILENAME, c.entries_per_page)
     phonebook.load()
-    
+
     while True:
         print("\nТелефонный справочник")
         print("1. Вывести записи")
@@ -17,21 +18,21 @@ def main():
         print("4. Поиск записей")
         print("5. Выйти")
 
-        choice: str = input("Выберите действие: ")
+        choice = input("Выберите действие: ")
 
-        menu: dict = {
-            '1': display,
-            '2': add,
-            '3': edit,
-            '4': search,
-            '5': exit_program,
+        menu = {
+            "1": display,
+            "2": add,
+            "3": edit,
+            "4": search,
+            "5": exit_program,
         }
 
-        action = menu.get(choice)
-        if action:
+        if action := menu.get(choice):
             action(phonebook)
         else:
             print("Неверный выбор. Попробуйте снова.")
+
 
 def display(phonebook: Phonebook) -> None:
     """
@@ -43,13 +44,14 @@ def display(phonebook: Phonebook) -> None:
     while True:
         print(f"Всего страниц: {phonebook.calculate_pages()}")
         page_input = input("Введите номер страницы или 'выйти' для выхода: ")
-        if page_input.lower() == 'выйти':
+        if page_input.lower() == "выйти":
             break
         try:
             page = int(page_input)
             phonebook.display_entries(page)
         except ValueError:
             print("Неверный выбор. Попробуйте снова.")
+
 
 def add(phonebook: Phonebook) -> None:
     """
@@ -60,6 +62,7 @@ def add(phonebook: Phonebook) -> None:
     """
     print("Добавление новой записи:")
     phonebook.add_entry()
+
 
 def edit(phonebook: Phonebook) -> None:
     """
@@ -73,7 +76,8 @@ def edit(phonebook: Phonebook) -> None:
         entry_id = int(input("Введите номер записи для редактирования: "))
         phonebook.edit_entry(entry_id)
     except ValueError:
-            print("Неверный выбор.")
+        print("Неверный выбор.")
+
 
 def search(phonebook: Phonebook) -> None:
     """
@@ -83,13 +87,13 @@ def search(phonebook: Phonebook) -> None:
     - phonebook (Phonebook): The phonebook instance to search entries in.
     """
     query = input("Введите строку для поиска: ")
-    results = phonebook.search_entries(query)
-    if results:
+    if results := phonebook.search_entries(query):
         print("Результаты поиска:")
         for idx, entry in enumerate(results, start=1):
             print(f"{idx}. {entry}")
     else:
         print("Ничего не найдено.")
+
 
 def exit_program(phonebook: Phonebook) -> None:
     """
@@ -101,6 +105,7 @@ def exit_program(phonebook: Phonebook) -> None:
     phonebook.save_entries()
     print("До свидания!")
     sys.exit(0)
+
 
 if __name__ == "__main__":
     main()
