@@ -20,7 +20,7 @@ def logger(func):
 
     @wraps(func)
     def wrapper(*args, **kwargs):
-        logging.info(f"{func.__name__} - {args[1], kwargs}")
+        logging.info(f"{func.__name__} - {args[1:]}")
 
         return func(*args, **kwargs)
 
