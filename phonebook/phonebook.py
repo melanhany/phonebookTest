@@ -1,4 +1,5 @@
 from typing import List
+from .decorators import logger
 import os
 
 
@@ -66,6 +67,7 @@ class Phonebook:
             for entry in self.entries:
                 file.write(entry + "\n")
 
+    @logger
     def display_entries(self, page: int) -> None:
         """
         Display a page of phonebook entries.
@@ -78,6 +80,7 @@ class Phonebook:
         for entry in self.entries[start_idx:end_idx]:
             print(entry)
 
+    @logger
     def add_entry(self) -> None:
         """
         Add a new entry to the phonebook.
@@ -95,6 +98,7 @@ class Phonebook:
         new_entry: str = f"{entry_id}|{last_name}|{first_name}|{middle_name}|{organization}|{work_phone}|{personal_phone}"
         self.entries.append(new_entry)
 
+    @logger
     def edit_entry(self, entry_id: int) -> None:
         """
         Edit an existing phonebook entry.
@@ -121,6 +125,7 @@ class Phonebook:
         else:
             print("Запись с указанным номером не найдена.")
 
+    @logger
     def search_entries(self, query: str) -> List[str]:
         """
         Search for entries in the phonebook based on a query.
