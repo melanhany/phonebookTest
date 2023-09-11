@@ -18,20 +18,23 @@ def main():
         print("4. Поиск записей")
         print("5. Выйти")
 
-        choice = input("Выберите действие: ")
+        try:
+            choice = int(input("Выберите действие: "))
 
-        menu = {
-            "1": display,
-            "2": add,
-            "3": edit,
-            "4": search,
-            "5": exit_program,
-        }
+            menu = {
+                1: display,
+                2: add,
+                3: edit,
+                4: search,
+                5: exit_program,
+            }
 
-        if action := menu.get(choice):
-            action(phonebook)
-        else:
-            print("Неверный выбор. Попробуйте снова.")
+            if action := menu.get(choice):
+                action(phonebook)
+            else:
+                print("Неверный выбор. Попробуйте снова.")
+        except ValueError:
+            print("Неверный выбор. Нужно ввести цифру.")
 
 
 def display(phonebook: Phonebook) -> None:
