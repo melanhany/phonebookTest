@@ -20,7 +20,7 @@ def logger(func):
 
     @wraps(func)
     def wrapper(*args, **kwargs):
-        logging.info(f"{func.__name__} - {args[1]}")
+        logging.info(f"{func.__name__} - {args[1], kwargs}")
 
         return func(*args, **kwargs)
 
@@ -37,6 +37,7 @@ def timer(func):
     Returns:
         any_type: timed function
     """
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         start = time.perf_counter()

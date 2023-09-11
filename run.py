@@ -1,4 +1,7 @@
+from xml.dom import NotFoundErr
 from phonebook.phonebook import Phonebook
+from phonebook.schemas import UserInfo
+from pydantic import ValidationError
 import phonebook.constants as c
 import sys
 
@@ -64,7 +67,21 @@ def add(phonebook: Phonebook) -> None:
     - phonebook (Phonebook): The phonebook instance to add the entry to.
     """
     print("Добавление новой записи:")
-    phonebook.add_entry()
+    user_data: dict = {
+        "last_name": input("Фамилия: "),
+        "first_name": input("Имя: "),
+        "middle_name": input("Отчество: "),
+        "organization": input("Организация: "),
+        "work_phone": input("Телефон рабочий: "),
+        "personal_phone": input("Телефон личный: "),
+    }
+    try:
+        validated_data = UserInfo(**user_data)
+        phonebook.add_entry(validated_data)
+    except ValidationError as e:
+        print("\nПроизошла ошибка!")
+        for error in e.errors():
+            print(f'{error["loc"][0]} - {error["msg"]}')
 
 
 def edit(phonebook: Phonebook) -> None:
@@ -77,9 +94,27 @@ def edit(phonebook: Phonebook) -> None:
     print("Редактирование записи:")
     try:
         entry_id = int(input("Введите номер записи для редактирования: "))
-        phonebook.edit_entry(entry_id)
+
     except ValueError:
-        print("Неверный выбор.")
+        print("Нужно ввести числовое значение.")
+    try:
+        entry_index = phonebook.entry_exists(entry_id)
+        user_data: dict = {
+            "last_name": input("Фамилия: "),
+            "first_name": input("Имя: "),
+            "middle_name": input("Отчество: "),
+            "organization": input("Организация: "),
+            "work_phone": input("Телефон рабочий: "),
+            "personal_phone": input("Телефон личный: "),
+        }
+        validated_data = UserInfo(**user_data)
+        phonebook.edit_entry(entry_index, validated_data)
+    except NotFoundErr as e:
+        print(e)
+    except ValidationError as e:
+        print("\nПроизошла ошибка!")
+        for error in e.errors():
+            print(f'{error["loc"][0]} - {error["msg"]}')
 
 
 def search(phonebook: Phonebook) -> None:

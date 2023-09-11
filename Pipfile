@@ -5,6 +5,8 @@ name = "pypi"
 
 [packages]
 pydantic = "*"
+pydantic-extra-types = "*"
+phonenumbers = "*"
 
 [dev-packages]
 pytest = "*"
