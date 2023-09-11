@@ -4,6 +4,15 @@ import time
 
 
 def logger(func):
+    """
+    Log function to txt file
+
+    Args:
+        func (any_type): function to log
+
+    Returns:
+        any_type: logged function
+    """
     filename = "user_logs.txt"
     level = logging.INFO
     fmt = "[%(levelname)s] %(asctime)s - %(message)s"
@@ -19,6 +28,15 @@ def logger(func):
 
 
 def timer(func):
+    """
+    Timing execution time of a function
+
+    Args:
+        func (any_type): function to time
+
+    Returns:
+        any_type: timed function
+    """
     @wraps(func)
     def wrapper(*args, **kwargs):
         start = time.perf_counter()
