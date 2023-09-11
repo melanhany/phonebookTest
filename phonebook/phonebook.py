@@ -1,4 +1,7 @@
 from typing import List
+from xml.dom import NotFoundErr
+
+from phonebook.schemas import UserInfo
 from .decorators import logger, timer
 import os
 
@@ -81,9 +84,9 @@ class Phonebook:
         for entry in self.entries[start_idx:end_idx]:
             print(entry)
 
-    # @timer
-    # @logger
-    def add_entry(self) -> None:
+    @timer
+    @logger
+    def add_entry(self, user_data: UserInfo) -> None:
         """
         Add a new entry to the phonebook.
 
@@ -91,18 +94,25 @@ class Phonebook:
         """
         entry_id: int = self.id_counter
         self.id_counter += 1
-        last_name: str = input("Фамилия: ")
-        first_name: str = input("Имя: ")
-        middle_name: str = input("Отчество: ")
-        organization: str = input("Организация: ")
-        work_phone: str = input("Телефон рабочий: ")
-        personal_phone: str = input("Телефон личный: ")
-        new_entry: str = f"{entry_id}|{last_name}|{first_name}|{middle_name}|{organization}|{work_phone}|{personal_phone}"
+
+        new_entry: str = f"{entry_id}|{user_data.last_name}|{user_data.first_name}|{user_data.middle_name}|{user_data.organization}|{user_data.work_phone}|{user_data.personal_phone}"
         self.entries.append(new_entry)
+
+    def entry_exists(self, entry_id: int) -> int:
+        # sourcery skip: assign-if-exp, boolean-if-exp-identity, reintroduce-else, remove-unnecessary-cast
+        entry_index: int = -1
+        for i, entry in enumerate(self.entries):
+            parts: List[str] = entry.split("|")
+            if parts and int(parts[0]) == entry_id:
+                entry_index = i
+                break
+        if entry_index == -1:
+            raise NotFoundErr("Запись с указанным номером не найдена.")
+        return entry_index
 
     @timer
     @logger
-    def edit_entry(self, entry_id: int) -> None:
+    def edit_entry(self, entry_index: int, user_data: UserInfo) -> None:
         """
         Edit an existing phonebook entry.
 
@@ -111,22 +121,14 @@ class Phonebook:
 
         This method allows the user to edit an existing entry's information.
         """
-        entry_index: int = -1
-        for i, entry in enumerate(self.entries):
-            parts: List[str] = entry.split("|")
-            if parts and int(parts[0]) == entry_id:
-                entry_index = i
-                break
+        parts: List[str] = self.entries[entry_index].split("|")
+        entry_id: str = parts[0]
+        self.entries[
+            entry_index
+        ] = f"{entry_id}|{user_data.last_name}|{user_data.first_name}|{user_data.middle_name}|{user_data.organization}|{user_data.work_phone}|{user_data.personal_phone}"
 
-        if entry_index != -1:
-            new_entry: str = input(
-                "Введите новую информацию в формате 'Фамилия|Имя|Отчество|Организация|Телефон рабочий|Телефон личный': "
-            )
-            self.entries[entry_index] = f"{entry_id}|{new_entry}"
-            self.save_entries()
-            print("Запись успешно отредактирована.")
-        else:
-            print("Запись с указанным номером не найдена.")
+        self.save_entries()
+        print("Запись успешно отредактирована.")
 
     @timer
     @logger
